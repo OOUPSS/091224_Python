@@ -1,0 +1,94 @@
+# Python fundamentals: Домашнее задание 32 (Python)
+
+# 1. Реализовать класс Counter, который представляет счетчик. Класс должен поддерживать следующие операции:
+class Counter:
+    def __init__(self, value=0):
+        if not isinstance(value, int):
+            raise ValueError("Значение счетчика должно быть целым числом.")
+        self.value = value
+
+    def __iadd__(self, other):
+        if not isinstance(other, int):
+            raise ValueError("Прибавляемое значение должно быть целым числом.")
+        self.value += other
+        return self
+
+    def __isub__(self, other):
+        if not isinstance(other, int):
+            raise ValueError("Вычитаемое значение должно быть целым числом.")
+        self.value -= other
+        return self
+
+    def __str__(self):
+        return f"Счетчик: {self.value}"
+
+    def __int__(self):
+        return self.value
+
+# Пример использования:
+counter = Counter(5)
+counter += 3
+print(counter)  # Вывод: Счетчик: 8
+
+counter -= 2
+print(int(counter))  # Вывод: 6
+
+# 2. Реализовать класс Email, представляющий электронное письмо. Класс должен поддерживать следующие операции:
+from datetime import datetime
+
+class Email:
+    def __init__(self, отправитель, получатель, тема, текст, дата):
+        self.отправитель = отправитель
+        self.получатель = получатель
+        self.тема = тема
+        self.текст = текст
+        self.дата = datetime.strptime(дата, "%Y-%m-%d")
+
+    def __str__(self):
+        return (f"От: {self.отправитель}\n"
+                f"Кому: {self.получатель}\n"
+                f"Тема: {self.тема}\n\n"
+                f"{self.текст}\n")
+
+    def __len__(self):
+        return len(self.текст)
+
+    def __hash__(self):
+        return hash((self.отправитель, self.получатель, self.тема, self.текст, self.дата))
+
+    def __bool__(self):
+        return bool(self.текст)
+
+    def __lt__(self, другой):
+        """Сравнение писем по дате"""
+        return self.дата < другой.дата
+
+    def is_reply(self):
+        """Проверка, является ли письмо ответом (начинается с 'Re:')"""
+        return self.тема.startswith("Re:")
+
+# Пример использования:
+email1 = Email("ivanov.p@company.ru", "petrov.k@company.com", "Вопрос по проекту",
+               "Привет, Петр! Как продвигается проект?", "2022-06-10")
+email2 = Email("petrov.k@company.com", "ivanov.p@company.ru", "Re: Вопрос по проекту",
+               "Привет, Иван! Все в порядке, скоро будет готово.", "2022-06-11")
+email3 = Email("sidorov.a@randommail.com", "kuznetsov.b@work.org", "Привет",
+               "Привет, как ты?", "2022-06-09")
+
+# Выводим информацию о письме
+print(email1)
+
+# Проверка длины текста письма
+print(len(email2))  # Вывод: длина текста письма
+
+# Проверка хеш-значения письма
+print(hash(email3))  # Вывод: хеш-значение (пример)
+
+# Проверка наличия текста
+print(bool(email1))  # Вывод: True
+
+# Проверка, является ли письмо ответом
+print(email2.is_reply())  # Вывод: True
+
+# Сравнение писем по дате
+print(email2 > email3)  # Вывод: True

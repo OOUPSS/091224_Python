@@ -1,0 +1,99 @@
+#Python fundamentals: Домашнее задание 33 (Python)
+
+# 1. Реализуем класс Employee, представляющий сотрудника компании.
+class Employee:
+    # Статическое поле, которое хранит название компании
+    company = "ABC Company"
+
+    @classmethod
+    def set_company(cls, name):
+        """Метод для изменения названия компании."""
+        cls.company = name
+
+    def __init__(self, name, position):
+        """Конструктор, принимающий имя и должность сотрудника."""
+        self.name = name
+        self.position = position
+
+    def get_info(self):
+        """Метод для получения информации о сотруднике."""
+        return f"Name: {self.name}\nPosition: {self.position}\nCompany: {self.company}"
+
+# Пример:
+employee1 = Employee("John", "Manager")
+employee2 = Employee("Alice", "Developer")
+
+# Вывод информации о первом сотруднике
+print(employee1.get_info())
+# Вывод:
+# Name: John
+# Position: Manager
+# Company: ABC Company
+
+# Изменим название компании для всех сотрудников
+Employee.set_company("XYZ Company")
+
+# Вывод информации о втором сотруднике с обновленным названием компании
+print(employee2.get_info())
+# Вывод:
+# Name: Alice
+# Position: Developer
+# Company: XYZ Company
+
+
+# 2. Реализуем абстрактный базовый класс Shape и наследующие его классы Rectangle и Circle.
+from abc import ABC, abstractmethod
+import math
+
+# Абстрактный базовый класс Shape
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        """Метод для вычисления площади фигуры."""
+        pass
+
+    @abstractmethod
+    def perimeter(self):
+        """Метод для вычисления периметра фигуры."""
+        pass
+
+# Класс прямоугольник
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        """Конструктор прямоугольника принимает ширину и высоту."""
+        self.width = width
+        self.height = height
+
+    def area(self):
+        """Возвращаем площадь прямоугольника."""
+        return self.width * self.height
+
+    def perimeter(self):
+        """Возвращаем периметр прямоугольника."""
+        return 2 * (self.width + self.height)
+
+# Класс круг
+class Circle(Shape):
+    def __init__(self, radius):
+        """Конструктор круга принимает радиус."""
+        self.radius = radius
+
+    def area(self):
+        """Возвращаем площадь круга."""
+        return math.pi * self.radius ** 2
+
+    def perimeter(self):
+        """Возвращаем периметр круга (или длину окружности)."""
+        return 2 * math.pi * self.radius
+
+# Пример:
+rectangle = Rectangle(5, 3)
+circle = Circle(2)
+
+# Выводим площадь и периметр для прямоугольника
+print(f"Rectangle area: {rectangle.area()}")  # Вывод: Rectangle area: 15
+print(f"Rectangle perimeter: {rectangle.perimeter()}")  # Вывод: Rectangle perimeter: 16
+
+# Выводим площадь и периметр для круга
+print(f"Circle area: {circle.area()}")  # Вывод: Circle area: 12.566370614359172
+print(f"Circle perimeter: {circle.perimeter()}")  # Вывод: Circle perimeter: 12.566370614359172

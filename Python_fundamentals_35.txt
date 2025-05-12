@@ -1,0 +1,70 @@
+Python fundamentals: Домашнее задание 35 (Python)
+
+import requests
+import re
+from collections import Counter
+
+
+# Задание 1: Функция для отправки GET-запроса и получения информации о ответе
+def get_response(url):
+    """
+    Отправляет GET-запрос по заданному URL и возвращает объект ответа.
+
+    :param url: URL для запроса
+    :return: Объект ответа
+    """
+    response = requests.get(url)
+    return response
+
+
+# Задание 2: Функция для поиска наиболее часто встречающихся слов на веб-страницах
+def find_common_words(url_list):
+    """
+    Принимает список URL-адресов и возвращает список наиболее часто встречающихся слов на этих страницах.
+
+    :param url_list: Список URL-адресов
+    :return: Список наиболее часто встречающихся слов
+    """
+    all_words = []
+
+    for url in url_list:
+        # Получаем ответ от сервера
+        response = get_response(url)
+
+        # Если статус код не 200, пропускаем эту ссылку
+        if response.status_code != 200:
+            print(f"Ошибка при запросе к {url}: статус {response.status_code}")
+            continue
+
+        # Извлекаем текст ответа
+        text = response.text.lower()  # Приводим текст к нижнему регистру для единообразия
+
+        # Используем регулярное выражение для извлечения всех слов
+        words = re.findall(r'\b\w+\b', text)
+
+        # Добавляем слова на текущей странице в общий список
+        all_words.extend(words)
+
+    # Считаем частоту встречаемости слов
+    word_count = Counter(all_words)
+
+    # Получаем наиболее часто встречающиеся слова, отсортированные по частоте
+    most_common_words = word_count.most_common()
+
+    return most_common_words
+
+
+# Пример использования задания 1:
+url = "https://api.example.com"
+response = get_response(url)
+
+print("Status Code:", response.status_code)
+print("Response Text:", response.text[:100])  # Выводим только первые 100 символов текста
+print("Response Headers:", response.headers)
+
+# Пример использования задания 2:
+url_list = ["https://example.com", "https://example.org"]
+common_words = find_common_words(url_list)
+
+# Вывод наиболее частых слов с их частотой
+print("Most Common Words:", common_words)

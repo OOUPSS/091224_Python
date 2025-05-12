@@ -1,0 +1,46 @@
+# Python fundamentals: Домашнее задание 31 (Python)
+
+import logging
+
+# Настройка логирования
+logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(message)s")
+
+# Декоратор для проверки типов аргументов
+def validate_args(*expected_types):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for arg, expected in zip(args, expected_types):
+                if not isinstance(arg, expected):
+                    raise TypeError(f"Аргумент {arg} имеет неправильный тип {type(arg)}. Ожидается {expected}.")
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# Декоратор для логирования
+def log_args(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        logging.info(f"Аргументы: {', '.join(map(str, args))}, Результат: {result}")
+        return result
+    return wrapper
+
+# Пример: функция с двумя декораторами
+@log_args
+@validate_args(int, str)
+def greet(age, name):
+    print(f"Привет, {name}! Тебе {age} лет.")
+
+@log_args
+@validate_args(int, int)
+def add(a, b):
+    return a + b
+
+# Примеры использования
+try:
+    greet(25, "Анна")     # OK
+    greet("25", "Анна")   # Ошибка
+except TypeError as e:
+    print(e)
+
+add(2, 3)
+add(5, 7)

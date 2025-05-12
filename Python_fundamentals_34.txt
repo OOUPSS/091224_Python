@@ -1,0 +1,41 @@
+#Python fundamentals: Домашнее задание 34 (Python)
+
+import re
+
+# Задание 1: Функция для извлечения адресов электронной почты
+def extract_emails(text):
+    """
+    Извлекает все адреса электронной почты из текста.
+
+    :param text: Входной текст
+    :return: Список всех email-адресов
+    """
+    # Регулярное выражение для поиска email
+    email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    emails = re.findall(email_pattern, text)
+    return emails
+
+# Задание 2: Функция для выделения ключевых слов
+def highlight_keywords(text, keywords):
+    """
+    Выделяет все ключевые слова в тексте, оборачивая их в символы *.
+
+    :param text: Входной текст
+    :param keywords: Список ключевых слов
+    :return: Текст с выделенными ключевыми словами
+    """
+    # Проходим по каждому ключевому слову и выделяем его
+    for keyword in keywords:
+        text = re.sub(rf'\b{re.escape(keyword)}\b', lambda m: f'*{m.group(0)}*', text, flags=re.IGNORECASE)
+    return text
+
+# Пример использования для задания 1:
+text_for_emails = "Contact us at info@example.com or support@example.com for assistance."
+emails = extract_emails(text_for_emails)
+print(emails)  # Вывод: ['info@example.com', 'support@example.com']
+
+# Пример использования для задания 2:
+text_for_highlight = "This is a sample text. We need to highlight Python and programming."
+keywords = ["python", "programming"]
+highlighted_text = highlight_keywords(text_for_highlight, keywords)
+print(highlighted_text)  # Вывод: "This is a sample text. We need to highlight *Python* and *programming*."
