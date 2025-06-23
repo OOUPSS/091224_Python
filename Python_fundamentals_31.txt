@@ -1,5 +1,4 @@
 # Python fundamentals: Домашнее задание 31 (Python)
-
 import logging
 
 # Настройка логирования
