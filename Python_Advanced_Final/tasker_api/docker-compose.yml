@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  db_postgres:
+    image: postgres:15.5-alpine
+    container_name: postgres_db_container
+    env_file:
+      - .env
+    expose:
+      - 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin_user -d app_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api_server:
+    build: .
+    container_name: api_server_container
+    command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
+    env_file:
+      - .env
+    ports:
+      - "8008:8000"
+    volumes:
+      - .:/app_code
+    depends_on:
+      db_postgres:
+        condition: service_healthy
+
+  redis_cache:
+    image: redis:7.0-alpine
+    container_name: redis_cache_container
+    command: redis-server --save 60 1 --loglevel warning
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  metrics_server:
+    image: prom/prometheus:v2.47.1
+    container_name: metrics_server_container
+    volumes:
+      - ./prom_config.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9095:9090"
+
+  log_storage:
+    image: grafana/loki:2.9.2
+    container_name: log_storage_container
+    ports:
+      - "3105:3100"
+    volumes:
+      - ./log_config.yaml:/etc/loki/loki-config.yaml
+    command: -config.file=/etc/loki/loki-config.yaml
+
+  monitoring_dashboard:
+    image: grafana/grafana:10.2.1
+    container_name: monitoring_dashboard_container
+    ports:
+      - "3005:3000"
+    volumes:
+      - ./grafana/data_sources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./grafana/api_metrics.json:/etc/grafana/provisioning/dashboards/dashboard.json
+
+  log_collector:
+    image: grafana/promtail:2.9.2
+    container_name: log_collector_container
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
+      - /var/log:/var/log:ro
+    command: -config.file=/etc/promtail/promtail-config.yaml
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
