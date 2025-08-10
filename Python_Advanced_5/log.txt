@@ -1,0 +1,8 @@
+$ flask db migrate -m "Добавлена таблица категорий и связь с вопросами"
+  INFO  [alembic.runtime.migration]  Context impl SQLiteImpl.
+  INFO  [alembic.runtime.migration]  Will assume sqlite dialect is in use
+  INFO  [alembic.runtime.migration]  Generating migration script
+  INFO  [alembic.runtime.migration]  Completed migration script.
+
+$ flask db upgrade
+  INFO  [alembic.runtime.migration]  Applying migration 2025xxxxx_add_category_and_update_questions
